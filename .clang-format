@@ -1,0 +1,91 @@
+
+# C project formatting — clang-format 23
+BasedOnStyle: LLVM
+
+# Indentation and line layout
+IndentWidth: 4
+ContinuationIndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+LineEnding: LF
+MaxEmptyLinesToKeep: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# Alignment
+AlignAfterOpenBracket: true
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: DontAlign
+AlignOperands: DontAlign
+AlignTrailingComments:
+  Kind: Never
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+BreakAfterOpenBracketBracedList: true
+BreakAfterOpenBracketFunction: true
+BreakAfterOpenBracketIf: true
+BreakAfterOpenBracketLoop: false
+BreakAfterOpenBracketSwitch: false
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeCloseBracketFunction: true
+BreakBeforeCloseBracketIf: true
+BreakBeforeCloseBracketLoop: false
+BreakBeforeCloseBracketSwitch: false
+
+# Functions, calls, and control statements
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+PackArguments:
+  BinPack: OnePerLine
+PackParameters:
+  BinPack: OnePerLine
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+BreakAfterReturnType: Automatic
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+AlwaysBreakBeforeMultilineStrings: false
+InsertBraces: true
+
+# Braced initializers and bit fields
+Cpp11BracedListStyle: FunctionCall
+BitFieldColonSpacing: Both
+SpaceInEmptyBraces: Never
+
+# Switches, labels, and preprocessor directives
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentGotoLabels: OuterIndent
+IndentPPDirectives: BeforeHash
+IndentWrappedFunctionNames: false
+WhitespaceSensitiveMacros:
+  - PRAGMA_WARNING_DISABLE_GCC
+  - PRAGMA_WARNING_DISABLE_MSVC
+
+# Includes and comments
+IncludeBlocks: Preserve
+SortIncludes:
+  Enabled: false
+ReflowComments: Always
+SpacesBeforeTrailingComments: 1
+
+# Spacing
+SpaceAfterCStyleCast: true
+SpaceAfterLogicalNot: false
+SpaceAroundPointerQualifiers: Default
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeParens: ControlStatements
+SpaceBeforeSquareBrackets: false
+SpacesInParens: Never
+SpacesInSquareBrackets: false

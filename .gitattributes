@@ -1,0 +1,5 @@
+# Normalize text files to LF in the working tree and repository.
+* text=auto eol=lf
+
+# Preserve Intel HEX files exactly, including their line endings.
+*.hex -text whitespace=cr-at-eol
