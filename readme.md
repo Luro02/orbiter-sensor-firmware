@@ -1,5 +1,4 @@
 Orbiter 2 Smart Sensor Firmware
-
 ===
 
 This is an **unofficial** firmware for the [Orbiter 2 Smart Sensor](https://www.orbiterprojects.com/smart-sensor-for-orbiter-v2/) based on the firmware found in [LorinczElectronics/Orbiter-2-Smart-Sensor](https://github.com/LorinczElectronics/Orbiter-2-Smart-Sensor).
