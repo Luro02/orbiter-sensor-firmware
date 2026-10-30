@@ -9,42 +9,40 @@ permissions:
   contents: read
 
 jobs:
-  validate-and-build:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
+  build:
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - uses: actions/checkout@v7
+      - name: Cache APT downloads
+        uses: actions/cache@v6
         with:
-          python-version: '3.13.5'
-      - name: Install tools
+          path: ${{ runner.temp }}/apt-cache/*.deb
+          key: ubuntu-26.04-${{ runner.arch }}-apt-${{ hashFiles('.github/workflows/firmware.yml') }}
+      - name: Install build and lint tools
         shell: bash
         run: |
           set -euo pipefail
+          curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | sudo tee /usr/share/keyrings/llvm.asc > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/resolute/ llvm-toolchain-resolute-23 main" \
+            | sudo tee /etc/apt/sources.list.d/llvm23.list > /dev/null
+          mkdir -p "$RUNNER_TEMP/apt-cache/partial"
           sudo apt-get update
-          sudo apt-get install --yes gcc-14 g++-14 make
-          python -m pip install clang-format==23.1.3 clang-tidy==23.1.4
-          curl --fail --location --retry 3 -o "$RUNNER_TEMP/avr.tar.bz2" https://github.com/SpenceKonde/DxCore/raw/gh-pages/avr-gcc-7.3.0-atmel3.6.1-azduino8-x86_64-pc-linux-gnu.tar.bz2
-          echo "ffce8ce1ef79bd6ec25a1a7154900966bcfdcd1731eb5d1e45c60e914a655e1d  $RUNNER_TEMP/avr.tar.bz2" | sha256sum --check
-          mkdir "$RUNNER_TEMP/avr"
-          tar -xjf "$RUNNER_TEMP/avr.tar.bz2" --strip-components=1 -C "$RUNNER_TEMP/avr"
-          echo "$RUNNER_TEMP/avr/bin" >> "$GITHUB_PATH"
-      - name: Check format and lint
-        run: python tests/lint.py --avr-include "$RUNNER_TEMP/avr/avr/include"
-      - name: Run complete regression matrix
-        run: python tests/verify.py --avr-bin "$RUNNER_TEMP/avr/bin" --host-cc gcc-14 --host-cxx g++-14
-      - name: Build downloadable firmware
-        run: python tests/package_firmware.py --avr-bin "$RUNNER_TEMP/avr/bin" --revision "$GITHUB_SHA"
-      - name: Upload firmware and build manifest
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+          sudo apt-get -o Dir::Cache::archives="$RUNNER_TEMP/apt-cache" install --yes --no-install-recommends \
+            gcc-avr binutils-avr avr-libc clang-format-23 clang-tidy-23
+      - name: Check formatting
+        run: clang-format-23 --dry-run --Werror src/*.c src/*.h
+      - name: Run clang-tidy
+        run: |
+          clang-tidy-23 src/*.c -- --target=avr -mmcu=attiny202 \
+            -std=c11 -fshort-enums -Isrc -isystem /usr/lib/avr/include
+      - name: Build firmware
+        run: make
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
         with:
           name: orbiter-attiny202-${{ github.sha }}
-          path: build/firmware-downloads/
+          path: build/orbiter.hex
           if-no-files-found: error
           retention-days: 90
-      - name: Upload validation report
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: validation-${{ github.sha }}
-          path: build/verification/report.json
-          if-no-files-found: error

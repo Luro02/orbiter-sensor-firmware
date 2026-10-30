@@ -7,6 +7,8 @@
 #include <avr/io.h>
 /* Inline tiny I/O operations keep the fast ISR free of call-clobbered register
  * saves. SBI/CBI affect FS only; slow FTU writes use independent SET/CLR aliases. */
+/* VPORTA is mapped at address zero, which is valid register memory on AVR. */
+// NOLINTBEGIN(clang-analyzer-core.NullDereference)
 static inline bool board_filament_pin_high(void) { return (VPORTA.IN & PIN3_bm) != 0; }
 static inline void board_write_filament_signal(bool present) {
     if (present) {
@@ -15,6 +17,7 @@ static inline void board_write_filament_signal(bool present) {
         VPORTA.OUT &= (uint8_t) ~PIN1_bm;
     }
 }
+// NOLINTEND(clang-analyzer-core.NullDereference)
 
 void board_init(void);
 bool board_clock_init(void);

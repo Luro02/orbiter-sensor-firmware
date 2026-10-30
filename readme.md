@@ -94,6 +94,8 @@ Flashing this file does not change fuses.
 
 The hex file has to be flashed to the sensor, unfortunately it is not possible to do this without a programmer.
 
+In case the firmware is unavailable from CI, it is included in the repository.
+
 ## Serial to TTL
 
 You can use a serial to TTL adapter like an FT232, CH340, CP2102, ...
